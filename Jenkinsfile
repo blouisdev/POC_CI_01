@@ -25,12 +25,19 @@ pipeline {
             }
         }
 		stage('SonarQube analysis') {
-			def scannerHome = tool 'SonarScanner 4.0';
-			withSonarQubeEnv(credentialsId: '35905528e393f847949f3c9d1feecfde7a7afc54', installationName: 'local')
-			{
-				sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar'
+			agent any
+            steps {
+				withSonarQubeEnv('local') {
+					sh 'mvn sonar:sonar'
+				}
 			}
 		}
-		
+		stage("Quality Gate") {
+            steps {
+              timeout(time: 1, unit: 'HOURS') {
+                waitForQualityGate abortPipeline: true
+              }
+            }
+        }
     }
 }
