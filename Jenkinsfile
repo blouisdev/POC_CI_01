@@ -25,7 +25,6 @@ pipeline {
             }
         }
 		stage('SonarQube analysis') {
-			agent any
             steps {
 				withSonarQubeEnv('local') {
 					sh 'mvn sonar:sonar'
